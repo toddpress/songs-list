@@ -1,50 +1,50 @@
-title,artist,link
-What I Got,Sublime,https://www.youtube.com/watch?v=0Uc3ZrmhDN4
-Jenny Says,Cowboy Mouth,https://www.youtube.com/watch?v=NEfpoUuKFOY
-Hook,Blues Traveller,https://www.youtube.com/watch?v=pdz5kCaCRFM
-Thunder Rolls,Garth Brooks,https://www.youtube.com/watch?v=mT56hZhmP9E
-Friends in Low Places,Garth Brooks,https://www.youtube.com/watch?v=aWtv_ySeNW0
-American Pie,Don McLean,https://www.youtube.com/watch?v=PRpiBpDy7MQ
-Flagpole Sitta,Harvey Danger,https://www.youtube.com/watch?v=wYsMjEeEg4g
-Wish You Were Here,Pink Floyd,https://www.youtube.com/watch?v=IXdNnw99-Ic
-What You Gonna Do With The Cowboy?,Garth Brooks,https://www.youtube.com/watch?v=ICtlA7LfOlY
-Man Who Sold The World,Nirvana,https://www.youtube.com/watch?v=fregObNcHC8
-Sitting Waiting Wishing,Jack Johnson,https://www.youtube.com/watch?v=IhTvifGShw4
-Roses,OutKast,https://www.youtube.com/watch?v=gWju37TZfo0
-Margaritaville,Jimmy Buffet,https://www.youtube.com/watch?v=mrF4nF8VUb4
-Firewater Burn,Bloodhound Gang,https://www.youtube.com/watch?v=Adgx9wt63NY
-Layla,Eric Clapton,https://www.youtube.com/watch?v=5dCSUD37qxQ
-Santa Monica,Everclear,https://www.youtube.com/watch?v=MW6E_TNgCsY
-Under The Bridge,Red Hot Chili Peppers,https://www.youtube.com/watch?v=GLvohMXgcBo
-Garden Grove,Sublime,https://www.youtube.com/watch?v=qpSo_zj0UQw
-Sweater Song,Weezer,https://www.youtube.com/watch?v=LHQqqM5sr7g
-Holiday,Weezer,https://www.youtube.com/watch?v=r0c06lWyjJk
-Inside Out,Eve 6,https://www.youtube.com/watch?v=T8Xb_7YDroQ
-Sex And Candy,Marcy Playground,https://www.youtube.com/watch?v=-KT-r2vHeMM
-Song For The Dumped,Ben Folds Five,https://www.youtube.com/watch?v=XVk_e31dnlE
-Wagonwheel,Darius Rucker,https://www.youtube.com/watch?v=hvKyBcCDOB4
-Ground Control To Major Tom,David Bowie,https://www.youtube.com/watch?v=iYYRH4apXDo
-For What It's Worth,Buffalo Springfield,https://www.youtube.com/watch?v=80_39eAx3z8
-Bitch,Meredith Brooks,https://www.youtube.com/watch?v=_ivt_N2Zcts
-Good,Better Than Ezra,https://www.youtube.com/watch?v=Zhs0JD6XJyQ
-Summertime,Sublime,https://www.youtube.com/watch?v=ayE6Shlv598
-Last Kiss,Pearl Jam,https://www.youtube.com/watch?v=tNDWJ_KDkAc
-Caress Me Down,Sublime,https://www.youtube.com/watch?v=-V97ECdX1nE
-Love Me Dead,Ludo,https://www.youtube.com/watch?v=0XH3oMNKApI
-Badfish,Sublime,https://www.youtube.com/watch?v=rmadSGJCzo8
-Don't Look Back In Anger,Oasis,https://www.youtube.com/watch?v=cmpRLQZkTb8
-Baby One More Time,Britney Spears,https://www.youtube.com/watch?v=C-u5WLJ9Yk4
-Toxic,Britney Spears,https://www.youtube.com/watch?v=LOZuxwVk7TU
-The Roof Is On Fire,Bloodhound Gang,https://www.youtube.com/watch?v=Adgx9wt63NY
-Battle Of Who Could Care Less,Ben Folds Five,https://www.youtube.com/watch?v=0Y1wm7CFRCQ
-Lovefool,The Cardigans,https://www.youtube.com/watch?v=NI6aOFI7hms
-Santeria,Sublime,https://www.youtube.com/watch?v=AEYN5w4T_aM
-The Way,Fastball,https://www.youtube.com/watch?v=X5jlTlUTWfQ
-Where Is My Mind,Pixies,https://www.youtube.com/watch?v=OJ62RzJkYUo
-Last Dance With Mary Jane,Tom Petty,https://www.youtube.com/watch?v=aowSGxim_O8
-Mother Mother,Tracy Bonham,https://www.youtube.com/watch?v=2Xi8NvSetZc
-Foort,The Farters,https://www.youtube.com/watch?v=KOh5rvcJbxY
-sdd,asdf,https://www.youtube.com/watch?v=IYnsfV5N2n8
-Nirvana,About a Girl,https://www.youtube.com/watch?v=AhcttcXcRYY
-Foo FIghters,Learn to Fly,https://www.youtube.com/watch?v=1VQ_3sBZEm0
-Nirvana,About a girl,https://www.youtube.com/watch?v=AhcttcXcRYY
+title,artist,link,lyrics_link,chords_link
+What I Got,Sublime,https://www.youtube.com/watch?v=0Uc3ZrmhDN4,https://www.google.com/search?q=What+I+Got+Sublime+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=What+I+Got+Sublime+chords
+Jenny Says,Cowboy Mouth,https://www.youtube.com/watch?v=NEfpoUuKFOY,https://www.google.com/search?q=Jenny+Says+Cowboy+Mouth+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Jenny+Says+Cowboy+Mouth+chords
+Hook,Blues Traveller,https://www.youtube.com/watch?v=pdz5kCaCRFM,https://www.google.com/search?q=Hook+Blues+Traveller+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Hook+Blues+Traveller+chords
+Thunder Rolls,Garth Brooks,https://www.youtube.com/watch?v=mT56hZhmP9E,https://www.google.com/search?q=Thunder+Rolls+Garth+Brooks+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Thunder+Rolls+Garth+Brooks+chords
+Friends in Low Places,Garth Brooks,https://www.youtube.com/watch?v=aWtv_ySeNW0,https://www.google.com/search?q=Friends+in+Low+Places+Garth+Brooks+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Friends+in+Low+Places+Garth+Brooks+chords
+American Pie,Don McLean,https://www.youtube.com/watch?v=PRpiBpDy7MQ,https://www.google.com/search?q=American+Pie+Don+McLean+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=American+Pie+Don+McLean+chords
+Flagpole Sitta,Harvey Danger,https://www.youtube.com/watch?v=wYsMjEeEg4g,https://www.google.com/search?q=Flagpole+Sitta+Harvey+Danger+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Flagpole+Sitta+Harvey+Danger+chords
+Wish You Were Here,Pink Floyd,https://www.youtube.com/watch?v=IXdNnw99-Ic,https://www.google.com/search?q=Wish+You+Were+Here+Pink+Floyd+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Wish+You+Were+Here+Pink+Floyd+chords
+What You Gonna Do With The Cowboy?,Garth Brooks,https://www.youtube.com/watch?v=ICtlA7LfOlY,https://www.google.com/search?q=What+You+Gonna+Do+With+The+Cowboy%3F+Garth+Brooks+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=What+You+Gonna+Do+With+The+Cowboy%3F+Garth+Brooks+chords
+Man Who Sold The World,Nirvana,https://www.youtube.com/watch?v=fregObNcHC8,https://www.google.com/search?q=Man+Who+Sold+The+World+Nirvana+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Man+Who+Sold+The+World+Nirvana+chords
+Sitting Waiting Wishing,Jack Johnson,https://www.youtube.com/watch?v=IhTvifGShw4,https://www.google.com/search?q=Sitting+Waiting+Wishing+Jack+Johnson+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Sitting+Waiting+Wishing+Jack+Johnson+chords
+Roses,OutKast,https://www.youtube.com/watch?v=gWju37TZfo0,https://www.google.com/search?q=Roses+OutKast+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Roses+OutKast+chords
+Margaritaville,Jimmy Buffet,https://www.youtube.com/watch?v=mrF4nF8VUb4,https://www.google.com/search?q=Margaritaville+Jimmy+Buffet+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Margaritaville+Jimmy+Buffet+chords
+Firewater Burn,Bloodhound Gang,https://www.youtube.com/watch?v=Adgx9wt63NY,https://www.google.com/search?q=Firewater+Burn+Bloodhound+Gang+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Firewater+Burn+Bloodhound+Gang+chords
+Layla,Eric Clapton,https://www.youtube.com/watch?v=5dCSUD37qxQ,https://www.google.com/search?q=Layla+Eric+Clapton+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Layla+Eric+Clapton+chords
+Santa Monica,Everclear,https://www.youtube.com/watch?v=MW6E_TNgCsY,https://www.google.com/search?q=Santa+Monica+Everclear+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Santa+Monica+Everclear+chords
+Under The Bridge,Red Hot Chili Peppers,https://www.youtube.com/watch?v=GLvohMXgcBo,https://www.google.com/search?q=Under+The+Bridge+Red+Hot+Chili+Peppers+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Under+The+Bridge+Red+Hot+Chili+Peppers+chords
+Garden Grove,Sublime,https://www.youtube.com/watch?v=qpSo_zj0UQw,https://www.google.com/search?q=Garden+Grove+Sublime+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Garden+Grove+Sublime
+Sweater Song,Weezer,https://www.youtube.com/watch?v=LHQqqM5sr7g,https://www.google.com/search?q=Sweater+Song+Weezer+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Sweater+Song+Weezer+chords
+Holiday,Weezer,https://www.youtube.com/watch?v=r0c06lWyjJk,https://www.google.com/search?q=Holiday+Weezer+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Holiday+Weezer+chords
+Inside Out,Eve 6,https://www.youtube.com/watch?v=T8Xb_7YDroQ,https://www.google.com/search?q=Inside+Out+Eve+6+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Inside+Out+Eve+6+chords
+Sex And Candy,Marcy Playground,https://www.youtube.com/watch?v=-KT-r2vHeMM,https://www.google.com/search?q=Sex+And+Candy+Marcy+Playground+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Sex+And+Candy+Marcy+Playground+chords
+Song For The Dumped,Ben Folds Five,https://www.youtube.com/watch?v=XVk_e31dnlE,https://www.google.com/search?q=Song+For+The+Dumped+Ben+Folds+Five+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Song+For+The+Dumped+Ben+Folds+Five+chords
+Wagon Wheel,Darius Rucker,https://www.youtube.com/watch?v=hvKyBcCDOB4,https://www.google.com/search?q=Wagon+Wheel+Darius+Rucker+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Wagon+Wheel+Darius+Rucker
+Space Oddity,David Bowie,https://www.youtube.com/watch?v=iYYRH4apXDo,https://www.google.com/search?q=Space+Oddity+David+Bowie+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Space+Oddity+David+Bowie
+For What It's Worth,Buffalo Springfield,https://www.youtube.com/watch?v=80_39eAx3z8,https://www.google.com/search?q=For+What+It%27s+Worth+Buffalo+Springfield+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=For+What+It%27s+Worth+Buffalo+Springfield
+Bitch,Meredith Brooks,https://www.youtube.com/watch?v=_ivt_N2Zcts,https://www.google.com/search?q=Bitch+Meredith+Brooks+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Bitch+Meredith+Brooks+chords
+Good,Better Than Ezra,https://www.youtube.com/watch?v=Zhs0JD6XJyQ,https://www.google.com/search?q=Good+Better+Than+Ezra+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Good+Better+Than+Ezra+chords
+Summertime,Sublime,https://www.youtube.com/watch?v=ayE6Shlv598,https://www.google.com/search?q=Summertime+Sublime+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Summertime+Sublime+chords
+Last Kiss,Pearl Jam,https://www.youtube.com/watch?v=tNDWJ_KDkAc,https://www.google.com/search?q=Last+Kiss+Pearl+Jam+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Last+Kiss+Pearl+Jam+chords
+Caress Me Down,Sublime,https://www.youtube.com/watch?v=-V97ECdX1nE,https://www.google.com/search?q=Caress+Me+Down+Sublime+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Caress+Me+Down+Sublime+chords
+Love Me Dead,Ludo,https://www.youtube.com/watch?v=0XH3oMNKApI,https://www.google.com/search?q=Love+Me+Dead+Ludo+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Love+Me+Dead+Ludo+chords
+Badfish,Sublime,https://www.youtube.com/watch?v=rmadSGJCzo8,https://www.google.com/search?q=Badfish+Sublime+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Badfish+Sublime+chords
+Don't Look Back In Anger,Oasis,https://www.youtube.com/watch?v=cmpRLQZkTb8,https://www.google.com/search?q=Don%27t+Look+Back+In+Anger+Oasis+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Don%27t+Look+Back+In+Anger+Oasis+chords
+Baby One More Time,Britney Spears,https://www.youtube.com/watch?v=C-u5WLJ9Yk4,https://www.google.com/search?q=Baby+One+More+Time+Britney+Spears+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Baby+One+More+Time+Britney+Spears+chords
+Toxic,Britney Spears,https://www.youtube.com/watch?v=LOZuxwVk7TU,https://www.google.com/search?q=Toxic+Britney+Spears+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Toxic+Britney+Spears+chords
+The Roof Is On Fire,Bloodhound Gang,https://www.youtube.com/watch?v=Adgx9wt63NY,https://www.google.com/search?q=The+Roof+Is+On+Fire+Bloodhound+Gang+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=The+Roof+Is+On+Fire+Bloodhound+Gang+chords
+Battle Of Who Could Care Less,Ben Folds Five,https://www.youtube.com/watch?v=0Y1wm7CFRCQ,https://www.google.com/search?q=Battle+Of+Who+Could+Care+Less+Ben+Folds+Five+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Battle+Of+Who+Could+Care+Less+Ben+Folds+Five+chords
+Lovefool,The Cardigans,https://www.youtube.com/watch?v=NI6aOFI7hms,https://www.google.com/search?q=Lovefool+The+Cardigans+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Lovefool+The+Cardigans+chords
+Santeria,Sublime,https://www.youtube.com/watch?v=AEYN5w4T_aM,https://www.google.com/search?q=Santeria+Sublime+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Santeria+Sublime+chords
+The Way,Fastball,https://www.youtube.com/watch?v=X5jlTlUTWfQ,https://www.google.com/search?q=The+Way+Fastball+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=The+Way+Fastball+chords
+Where Is My Mind,Pixies,https://www.youtube.com/watch?v=OJ62RzJkYUo,https://www.google.com/search?q=Where+Is+My+Mind+Pixies+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Where+Is+My+Mind+Pixies+chords
+Last Dance With Mary Jane,Tom Petty,https://www.youtube.com/watch?v=aowSGxim_O8,https://www.google.com/search?q=Last+Dance+With+Mary+Jane+Tom+Petty+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Last+Dance+With+Mary+Jane+Tom+Petty+chords
+Mother Mother,Tracy Bonham,https://www.youtube.com/watch?v=2Xi8NvSetZc,https://www.google.com/search?q=Mother+Mother+Tracy+Bonham+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Mother+Mother+Tracy+Bonham+chords
+Foort,The Farters,https://www.youtube.com/watch?v=KOh5rvcJbxY,https://www.google.com/search?q=Foort+The+Farters+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Foort+The+Farters+chords
+sdd,asdf,https://www.youtube.com/watch?v=IYnsfV5N2n8,https://www.google.com/search?q=sdd+asdf+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=sdd+asdf+chords
+Nirvana,About a Girl,https://www.youtube.com/watch?v=AhcttcXcRYY,https://www.google.com/search?q=Nirvana+About+a+Girl+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Nirvana+About+a+Girl+chords
+Foo FIghters,Learn to Fly,https://www.youtube.com/watch?v=1VQ_3sBZEm0,https://www.google.com/search?q=Foo+FIghters+Learn+to+Fly+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Foo+FIghters+Learn+to+Fly+chords
+Nirvana,About a girl,https://www.youtube.com/watch?v=AhcttcXcRYY,https://www.google.com/search?q=Nirvana+About+a+girl+lyrics,https://www.ultimate-guitar.com/search.php?search_type=title&value=Nirvana+About+a+girl+chords
