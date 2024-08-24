@@ -75,16 +75,11 @@ def handle_save_changes():
         body=f'Saved Changes',
         icon=":material/thumb_up:"
     )
-    st.balloons()
+    st.empty()
+    
 
 def get_df_from_csv(file):
     return pd.read_csv(file)
-
-def get_unsaved_songs():
-    df = st.session_state.edited_df
-    return df[
-        df["link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
-    ]
 
 def main():
     st.title("Songs List Editor")
