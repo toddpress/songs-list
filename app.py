@@ -5,6 +5,8 @@ import urllib.parse
 
 from pytube import Search
 
+CSV_STORE_PATH = "./songs.csv"
+
 st.set_page_config(page_title="Linkify Songs List", page_icon="🎸")
 
 def add_youtube_links_to_df():
@@ -70,7 +72,7 @@ def handle_save_changes():
     add_lyrics_search_links_to_df()
     add_chords_search_links_to_df()
 
-    st.session_state.edited_df.to_csv("./songs.csv", index=False)
+    st.session_state.edited_df.to_csv(CSV_STORE_PATH, index=False)
     st.success(
         body=f'Saved Changes',
         icon=":material/thumb_up:"
@@ -88,15 +90,14 @@ def get_unsaved_songs():
 
 def main():
     st.title("Songs List Editor")
-    songs_df = get_df_from_csv("./songs.csv")
+    songs_df = get_df_from_csv(CSV_STORE_PATH)
 
     # Column order and sort by artist
-    columns_order = ["artist", "title", "link", "lyrics_link", "chords_link"]
+    columns_order = ["artist", "title", "proficiency", "link", "lyrics_link", "chords_link"]
     songs_df = songs_df[columns_order]
     songs_df = songs_df.sort_values(by="artist")
     # Reset the index to prevent it from showing as a column
     songs_df.reset_index(drop=True, inplace=True)
-    
 
     st.session_state.edited_df = st.data_editor(
         data=songs_df,
@@ -104,6 +105,18 @@ def main():
         column_config={
             "artist": st.column_config.TextColumn("Artist"),
             "title": st.column_config.TextColumn("Song"),
+            "proficiency": st.column_config.SelectboxColumn(
+                "Proficiency",
+                options=[
+                    "☆☆☆☆☆",
+                    "★☆☆☆☆",
+                    "★★☆☆☆",
+                    "★★★☆☆",
+                    "★★★★☆",
+                    "★★★★★"
+                ],
+                default="☆☆☆☆☆"
+            ),
             "link": st.column_config.LinkColumn(
                 "YT Link",
                 disabled=True,

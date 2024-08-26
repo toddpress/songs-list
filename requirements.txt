@@ -89,3 +89,4 @@ urllib3==2.2.2
 watchdog==4.0.2
 wcwidth==0.2.13
 yarl==1.9.4
+pytube==15.0.0
