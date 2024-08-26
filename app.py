@@ -73,11 +73,17 @@ def handle_save_changes():
     add_chords_search_links_to_df()
 
     st.session_state.edited_df.to_csv(CSV_STORE_PATH, index=False)
-    st.success(
-        body=f'Saved Changes',
-        icon=":material/thumb_up:"
-    )
-    st.balloons()
+
+    # Reload the updated data from the CSV file
+    updated_df = pd.read_csv(CSV_STORE_PATH)
+
+    # Update the session state with the reloaded data
+    st.session_state.edited_df = updated_df
+    # Set a flag in session state to indicate successful save
+    st.session_state.changes_saved = True
+
+    # Rerun the app to reflect the changes in the Streamlit table
+    st.rerun()
 
 def get_df_from_csv(file):
     return pd.read_csv(file)
@@ -98,6 +104,9 @@ def main():
     songs_df = songs_df.sort_values(by="artist")
     # Reset the index to prevent it from showing as a column
     songs_df.reset_index(drop=True, inplace=True)
+
+    if "changes_saved" not in st.session_state:
+        st.session_state.changes_saved = False
 
     st.session_state.edited_df = st.data_editor(
         data=songs_df,
@@ -142,6 +151,14 @@ def main():
         help="Save the changes made to the songs list",
     ):
         handle_save_changes()
+
+    if st.session_state.changes_saved:
+        st.session_state.changes_saved = False
+        st.success(
+            body=f'Saved Changes',
+            icon=":material/thumb_up:"
+        )
+        st.balloons()
 
 
 if __name__ == "__main__":
