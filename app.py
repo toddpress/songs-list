@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import urllib.parse
+import time
 
 from pytube import Search
 
@@ -75,7 +76,9 @@ def handle_save_changes():
         body=f'Saved Changes',
         icon=":material/thumb_up:"
     )
-    st.empty()
+    st.balloons()
+    time.sleep(2) #Give the balloons time to fly before dom refresh
+    st.rerun()  # Manually re-render with updated data
     
 
 def get_df_from_csv(file):
@@ -118,13 +121,12 @@ def main():
         hide_index=True,
         use_container_width=True,
     )
-
+    
     if st.button(
         label="Save Changes",
         help="Save the changes made to the songs list",
     ):
         handle_save_changes()
-
 
 if __name__ == "__main__":
     main()
