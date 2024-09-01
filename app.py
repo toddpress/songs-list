@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import urllib.parse
+import time
 
 from pytube import Search
 
@@ -78,15 +79,12 @@ def handle_save_changes():
         icon=":material/thumb_up:"
     )
     st.balloons()
+    time.sleep(2) #Give the balloons time to fly before dom refresh
+    st.rerun()  # Manually re-render with updated data
+    
 
 def get_df_from_csv(file):
     return pd.read_csv(file)
-
-def get_unsaved_songs():
-    df = st.session_state.edited_df
-    return df[
-        df["link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
-    ]
 
 def main():
     st.title("Songs List Editor")
@@ -136,13 +134,12 @@ def main():
         hide_index=True,
         use_container_width=True,
     )
-
+    
     if st.button(
         label="Save Changes",
         help="Save the changes made to the songs list",
     ):
         handle_save_changes()
-
 
 if __name__ == "__main__":
     main()
