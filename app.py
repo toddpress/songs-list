@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import urllib.parse
 import time
+import datetime
 
 from pytube import Search
 
@@ -86,6 +87,12 @@ def handle_save_changes():
 def get_df_from_csv(file):
     return pd.read_csv(file)
 
+def backup_csv():
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+    backup_path = f"./backups/songs_backup_{timestamp}.csv"
+    st.session_state.edited_df.to_csv(backup_path, index=False)
+    st.success(f"Backup created: {backup_path}")
+
 def main():
     st.title("Songs List Editor")
 
@@ -150,11 +157,16 @@ def main():
         use_container_width=True,
     )
 
-    if st.button(
-        label="Save Changes",
-        help="Save the changes made to the songs list",
-    ):
-        handle_save_changes()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(
+            label="Save Changes",
+            help="Save the changes made to the songs list",
+        ):
+            handle_save_changes()
+    with col2:
+        if st.button("Backup CSV"):
+            backup_csv()
 
 if __name__ == "__main__":
     main()
