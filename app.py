@@ -81,14 +81,29 @@ def handle_save_changes():
     st.balloons()
     time.sleep(2) #Give the balloons time to fly before dom refresh
     st.rerun()  # Manually re-render with updated data
-    
+
 
 def get_df_from_csv(file):
     return pd.read_csv(file)
 
 def main():
     st.title("Songs List Editor")
-    songs_df = get_df_from_csv(CSV_STORE_PATH)
+
+    # Add search functionality
+    search_query = st.text_input("Search songs by artist or title")
+
+    # Load and store the original DataFrame
+    original_df = get_df_from_csv(CSV_STORE_PATH)
+    st.session_state.original_df = original_df
+
+    songs_df = original_df.copy()
+
+    # Filter the DataFrame based on the search query
+    if search_query:
+        songs_df = songs_df[
+            songs_df['artist'].str.contains(search_query, case=False) |
+            songs_df['title'].str.contains(search_query, case=False)
+        ]
 
     # Column order and sort by artist
     columns_order = ["artist", "title", "proficiency", "link", "lyrics_link", "chords_link"]
@@ -134,7 +149,7 @@ def main():
         hide_index=True,
         use_container_width=True,
     )
-    
+
     if st.button(
         label="Save Changes",
         help="Save the changes made to the songs list",
