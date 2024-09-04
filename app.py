@@ -1,4 +1,3 @@
-# ./main.py
 import streamlit as st
 import pandas as pd
 import urllib.parse
@@ -10,21 +9,45 @@ CSV_STORE_PATH = "./songs.csv"
 
 st.set_page_config(page_title="Linkify Songs List", page_icon="🎸")
 
-def add_youtube_links_to_df():
+def update_links_for_unsaved_songs():
     df = st.session_state.edited_df
+
+    # Filter rows with any blank links
     unsaved_songs = df[
-        df["link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
+        (df["link"].isna()) | (df["lyrics_link"].isna()) | (df["chords_link"].isna()) & 
+        ~df["title"].isna() & ~df["artist"].isna()
     ]
+
     for index, row in unsaved_songs.iterrows():
         try:
-            query =f"{row['title']} {row['artist']}"
-            search = Search(query)
-            video = search.results[0]
-            yt_link = f"https://www.youtube.com/watch?v={video.video_id}"
-            st.session_state.edited_df.at[index, "link"] = yt_link
+            title = row["title"]
+            artist = row["artist"]
+            query = f"{title} {artist}"
 
-        except IndexError:
-            raise "No video found"
+            # Update YouTube link if blank
+            if pd.isna(row["link"]):
+                search = Search(query)
+                video = next((v for v in search.results if v.video_id), None)
+                if video:
+                    yt_link = f"https://www.youtube.com/watch?v={video.video_id}"
+                    st.session_state.edited_df.at[index, "link"] = yt_link
+                else:
+                    st.error(
+                        body=f"No valid video found for query: {query}",
+                        icon=":material/error:"
+                    )
+
+            # Update Lyrics link if blank
+            if pd.isna(row["lyrics_link"]):
+                search_query = urllib.parse.quote_plus(f"{query} lyrics")
+                search_link = f"https://www.google.com/search?q={search_query}"
+                st.session_state.edited_df.at[index, "lyrics_link"] = search_link
+
+            # Update Chords link if blank
+            if pd.isna(row["chords_link"]):
+                search_query = urllib.parse.quote_plus(query)
+                search_link = f"https://www.ultimate-guitar.com/search.php?search_type=title&value={search_query}"
+                st.session_state.edited_df.at[index, "chords_link"] = search_link
 
         except Exception as e:
             st.error(
@@ -32,50 +55,34 @@ def add_youtube_links_to_df():
                 icon=":material/error:"
             )
 
-def add_lyrics_search_links_to_df():
+def clear_links_for_changed_songs():
     df = st.session_state.edited_df
-    unsaved_songs = df[
-        df["lyrics_link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
-    ]
-    for index, row in unsaved_songs.iterrows():
-        try:
-            query = f"{row['title']} {row['artist']} lyrics"
-            search_query = urllib.parse.quote_plus(query)
-            search_link = f"https://www.google.com/search?q={search_query}"
-            st.session_state.edited_df.at[index, "lyrics_link"] = search_link
+    original_df = st.session_state.original_df
 
-        except Exception as e:
-            st.error(
-                body=f"Error: {e}",
-                icon=":material/error:"
-            )
+    # Merge the DataFrames to find rows in edited_df that are not in original_df
+    merged_df = df.merge(
+        original_df,
+        on=["artist", "title"],
+        how="left",
+        indicator=True
+    )
 
-def add_chords_search_links_to_df():
-    df = st.session_state.edited_df
-    unsaved_songs = df[
-        df["chords_link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
-    ]
-    for index, row in unsaved_songs.iterrows():
-        try:
-            query = f"{row['title']} {row['artist']}"
-            search_query = urllib.parse.quote_plus(query)
-            search_link = f"https://www.ultimate-guitar.com/search.php?search_type=title&value={search_query}"
-            st.session_state.edited_df.at[index, "chords_link"] = search_link
+    # Identify rows in edited_df that don't exist in original_df
+    changed_rows = merged_df[merged_df['_merge'] == 'left_only']
 
-        except Exception as e:
-            st.error(
-                body=f"Error: {e}",
-                icon=":material/error:"
-            )
+    # Clear the links for these rows
+    for index in changed_rows.index:
+        df.at[index, "link"] = None
+        df.at[index, "lyrics_link"] = None
+        df.at[index, "chords_link"] = None
 
 def handle_save_changes():
-    add_youtube_links_to_df()
-    add_lyrics_search_links_to_df()
-    add_chords_search_links_to_df()
+    clear_links_for_changed_songs()  # Clear links for changed songs
+    update_links_for_unsaved_songs()  # Update links for unsaved songs
 
     st.session_state.edited_df.to_csv(CSV_STORE_PATH, index=False)
     st.success(
-        body=f'Saved Changes',
+        body='Saved Changes',
         icon=":material/thumb_up:"
     )
     st.balloons()
