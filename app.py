@@ -5,37 +5,38 @@ import urllib.parse
 import time
 
 from pytube import Search
-
-CSV_STORE_PATH = "./songs.csv"
+from database import DatabaseManager
 
 st.set_page_config(page_title="Linkify Songs List", page_icon="🎸")
 
 def add_youtube_links_to_df():
     df = st.session_state.edited_df
     unsaved_songs = df[
-        df["link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
+        (df["link"].isna() | (df["link"] == "")) & 
+        ~df["title"].isna() & ~df["artist"].isna()
     ]
     for index, row in unsaved_songs.iterrows():
         try:
-            query =f"{row['title']} {row['artist']}"
+            query = f"{row['title']} {row['artist']}"
             search = Search(query)
             video = search.results[0]
             yt_link = f"https://www.youtube.com/watch?v={video.video_id}"
             st.session_state.edited_df.at[index, "link"] = yt_link
 
         except IndexError:
-            raise "No video found"
+            st.warning(f"No YouTube video found for {row['title']} by {row['artist']}")
 
         except Exception as e:
             st.error(
-                body=f"Error: {e}",
+                body=f"Error searching YouTube for {row['title']} by {row['artist']}: {e}",
                 icon=":material/error:"
             )
 
 def add_lyrics_search_links_to_df():
     df = st.session_state.edited_df
     unsaved_songs = df[
-        df["lyrics_link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
+        (df["lyrics_link"].isna() | (df["lyrics_link"] == "")) & 
+        ~df["title"].isna() & ~df["artist"].isna()
     ]
     for index, row in unsaved_songs.iterrows():
         try:
@@ -46,14 +47,15 @@ def add_lyrics_search_links_to_df():
 
         except Exception as e:
             st.error(
-                body=f"Error: {e}",
+                body=f"Error creating lyrics link for {row['title']} by {row['artist']}: {e}",
                 icon=":material/error:"
             )
 
 def add_chords_search_links_to_df():
     df = st.session_state.edited_df
     unsaved_songs = df[
-        df["chords_link"].isna() & ~df["title"].isna() & ~df["artist"].isna()
+        (df["chords_link"].isna() | (df["chords_link"] == "")) & 
+        ~df["title"].isna() & ~df["artist"].isna()
     ]
     for index, row in unsaved_songs.iterrows():
         try:
@@ -64,27 +66,51 @@ def add_chords_search_links_to_df():
 
         except Exception as e:
             st.error(
-                body=f"Error: {e}",
+                body=f"Error creating chords link for {row['title']} by {row['artist']}: {e}",
                 icon=":material/error:"
             )
 
 def handle_save_changes():
-    add_youtube_links_to_df()
-    add_lyrics_search_links_to_df()
-    add_chords_search_links_to_df()
+    # Initialize database connection
+    db = DatabaseManager()
+    
+    try:
+        add_youtube_links_to_df()
+        add_lyrics_search_links_to_df()
+        add_chords_search_links_to_df()
 
-    st.session_state.edited_df.to_csv(CSV_STORE_PATH, index=False)
-    st.success(
-        body=f'Saved Changes',
-        icon=":material/thumb_up:"
-    )
-    st.balloons()
-    time.sleep(2) #Give the balloons time to fly before dom refresh
-    st.rerun()  # Manually re-render with updated data
+        # Sync changes to database
+        success = db.sync_dataframe_to_database(st.session_state.edited_df, st.session_state.original_df)
+        
+        if success:
+            st.success(
+                body='Saved Changes to Database',
+                icon=":material/thumb_up:"
+            )
+            st.balloons()
+            time.sleep(2)  # Give the balloons time to fly before dom refresh
+            st.rerun()  # Manually re-render with updated data
+        else:
+            st.error("Failed to save changes to database")
+    
+    finally:
+        db.disconnect()
 
 
-def get_df_from_csv(file):
-    return pd.read_csv(file)
+def get_df_from_database(search_query=None):
+    """Load songs from database and return as DataFrame"""
+    db = DatabaseManager()
+    
+    try:
+        if search_query:
+            songs_data = db.search_songs(search_query)
+        else:
+            songs_data = db.get_all_songs()
+        
+        return db.songs_to_dataframe(songs_data)
+    
+    finally:
+        db.disconnect()
 
 def main():
     st.title("Songs List Editor")
@@ -92,23 +118,29 @@ def main():
     # Add search functionality
     search_query = st.text_input("Search songs by artist or title")
 
-    # Load and store the original DataFrame
-    original_df = get_df_from_csv(CSV_STORE_PATH)
-    st.session_state.original_df = original_df
-
-    songs_df = original_df.copy()
-
-    # Filter the DataFrame based on the search query
-    if search_query:
-        songs_df = songs_df[
-            songs_df['artist'].str.contains(search_query, case=False) |
-            songs_df['title'].str.contains(search_query, case=False)
-        ]
+    # Load and store the original DataFrame from database
+    try:
+        original_df = get_df_from_database(search_query if search_query else None)
+        st.session_state.original_df = original_df
+        songs_df = original_df.copy()
+    except Exception as e:
+        st.error(f"Error connecting to database: {e}")
+        st.info("Please ensure MySQL is running and the database is properly configured.")
+        return
 
     # Column order and sort by artist
     columns_order = ["artist", "title", "proficiency", "link", "lyrics_link", "chords_link"]
+    
+    # Ensure all columns exist
+    for col in columns_order:
+        if col not in songs_df.columns:
+            songs_df[col] = ""
+    
     songs_df = songs_df[columns_order]
-    songs_df = songs_df.sort_values(by="artist")
+    
+    if not songs_df.empty:
+        songs_df = songs_df.sort_values(by="artist")
+    
     # Reset the index to prevent it from showing as a column
     songs_df.reset_index(drop=True, inplace=True)
 
