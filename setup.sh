@@ -98,19 +98,39 @@ install_dependencies() {
     echo ""
     echo "Installing Python dependencies..."
     
-    if command -v pip3 &> /dev/null; then
-        pip3 install -r requirements.txt
-    elif command -v pip &> /dev/null; then
+    # Check if virtual environment exists, create if not
+    if [ ! -d "song_list_env" ]; then
+        echo "Creating virtual environment..."
+        python3 -m venv song_list_env
+        if [ $? -ne 0 ]; then
+            echo "✗ Failed to create virtual environment"
+            return 1
+        fi
+        echo "✓ Virtual environment created"
+    else
+        echo "✓ Virtual environment found"
+    fi
+    
+    # Activate virtual environment and install dependencies
+    source song_list_env/bin/activate
+    
+    if command -v pip &> /dev/null; then
         pip install -r requirements.txt
     else
-        echo "✗ pip is not installed. Please install pip first."
+        echo "✗ pip is not available in virtual environment"
+        deactivate
         return 1
     fi
     
     if [ $? -eq 0 ]; then
         echo "✓ Python dependencies installed successfully"
+        echo ""
+        echo "Note: To run the application, first activate the virtual environment:"
+        echo "  source song_list_env/bin/activate"
+        deactivate
     else
         echo "✗ Failed to install Python dependencies"
+        deactivate
         return 1
     fi
 }
@@ -150,7 +170,8 @@ if [ $? -eq 0 ]; then
     echo "Setup completed successfully! 🎉"
     echo ""
     echo "Next steps:"
-    echo "1. Start the application with: streamlit run app.py"
+    echo "1. Activate the virtual environment: source song_list_env/bin/activate"
+    echo "2. Start the application with: streamlit run app.py"
     echo ""
 else
     echo ""
