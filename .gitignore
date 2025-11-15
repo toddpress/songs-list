@@ -1,6 +1,7 @@
 venv/
 song_list_env/
 my_project_env/
+flask_env/
 
 # Python cache
 __pycache__/

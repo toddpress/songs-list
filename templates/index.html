@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songs List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎸 Songs List</h1>
+            <div class="header-actions">
+                <form method="GET" action="/" style="display: inline;">
+                    <input type="text" name="search" class="search-box" placeholder="Search by artist or title..." value="{{ search_query or '' }}">
+                </form>
+                <button class="btn btn-primary" onclick="openAddModal()">+ Add Song</button>
+            </div>
+        </header>
+
+        <div class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if songs %}
+                <table id="songsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)" style="cursor: pointer;">Artist <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(1)" style="cursor: pointer;">Song <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(2)" style="cursor: pointer;">Proficiency <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(3)" style="cursor: pointer;">Last Played <span class="sort-icon">↕</span></th>
+                            <th>YouTube</th>
+                            <th>Lyrics</th>
+                            <th>Chords</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for song in songs %}
+                        <tr>
+                            <td>{{ song.artist }}</td>
+                            <td>{{ song.title }}</td>
+                            <td class="proficiency-cell">
+                                <div class="proficiency-stars" data-song-id="{{ song.id }}">
+                                    <span class="star {% if song.proficiency in ['★☆☆☆☆', '★★☆☆☆', '★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" data-value="★☆☆☆☆" onclick="updateProficiency({{ song.id }}, '★☆☆☆☆')">★</span>
+                                    <span class="star {% if song.proficiency in ['★★☆☆☆', '★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" data-value="★★☆☆☆" onclick="updateProficiency({{ song.id }}, '★★☆☆☆')">★</span>
+                                    <span class="star {% if song.proficiency in ['★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" data-value="★★★☆☆" onclick="updateProficiency({{ song.id }}, '★★★☆☆')">★</span>
+                                    <span class="star {% if song.proficiency in ['★★★★☆', '★★★★★'] %}filled{% endif %}" data-value="★★★★☆" onclick="updateProficiency({{ song.id }}, '★★★★☆')">★</span>
+                                    <span class="star {% if song.proficiency == '★★★★★' %}filled{% endif %}" data-value="★★★★★" onclick="updateProficiency({{ song.id }}, '★★★★★')">★</span>
+                                </div>
+                            </td>
+                            <td class="date-cell">{{ song.last_played or '-' }}</td>
+                            <td class="link-cell">
+                                {% if song.link %}
+                                    <a href="{{ song.link }}" target="_blank">Listen</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="link-cell">
+                                {% if song.lyrics_link %}
+                                    <a href="{{ song.lyrics_link }}" target="_blank">Lyrics</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="link-cell">
+                                {% if song.chords_link %}
+                                    <a href="{{ song.chords_link }}" target="_blank">Chords</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="actions-cell">
+                                <button class="btn btn-success" onclick="logPlay({{ song.id }}, '{{ song.artist }}', '{{ song.title }}')">Log Play</button>
+                                <button class="btn btn-secondary" onclick="openEditModal({{ song.id }}, '{{ song.artist }}', '{{ song.title }}', '{{ song.proficiency }}', '{{ song.link or '' }}', '{{ song.lyrics_link or '' }}', '{{ song.chords_link or '' }}')">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteSong({{ song.id }}, '{{ song.artist }}', '{{ song.title }}')">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No songs found</h3>
+                    <p>Click "Add Song" to get started!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add Song Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Song</h2>
+                <button class="close" onclick="closeAddModal()">&times;</button>
+            </div>
+            <form method="POST" action="/add_song">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="artist">Artist *</label>
+                        <input type="text" id="artist" name="artist" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Song Title *</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="proficiency">Proficiency</label>
+                        <select id="proficiency" name="proficiency">
+                            <option value="☆☆☆☆☆">☆☆☆☆☆</option>
+                            <option value="★☆☆☆☆">★☆☆☆☆</option>
+                            <option value="★★☆☆☆">★★☆☆☆</option>
+                            <option value="★★★☆☆">★★★☆☆</option>
+                            <option value="★★★★☆">★★★★☆</option>
+                            <option value="★★★★★">★★★★★</option>
+                        </select>
+                    </div>
+                    <p style="color: #64748b; font-size: 0.9em; margin-top: 10px;">
+                        💡 YouTube, lyrics, and chords links will be automatically generated
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Song</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Song Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Song</h2>
+                <button class="close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm" method="POST" action="">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit_artist">Artist *</label>
+                        <input type="text" id="edit_artist" name="artist" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_title">Song Title *</label>
+                        <input type="text" id="edit_title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_proficiency">Proficiency</label>
+                        <select id="edit_proficiency" name="proficiency">
+                            <option value="☆☆☆☆☆">☆☆☆☆☆</option>
+                            <option value="★☆☆☆☆">★☆☆☆☆</option>
+                            <option value="★★☆☆☆">★★☆☆☆</option>
+                            <option value="★★★☆☆">★★★☆☆</option>
+                            <option value="★★★★☆">★★★★☆</option>
+                            <option value="★★★★★">★★★★★</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_link">YouTube Link</label>
+                        <input type="text" id="edit_link" name="link" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_lyrics_link">Lyrics Link</label>
+                        <input type="text" id="edit_lyrics_link" name="lyrics_link" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_chords_link">Chords Link</label>
+                        <input type="text" id="edit_chords_link" name="chords_link" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Update Song</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('show');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('show');
+        }
+
+        function openEditModal(songId, artist, title, proficiency, link, lyricsLink, chordsLink) {
+            document.getElementById('edit_artist').value = artist;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_proficiency').value = proficiency;
+            document.getElementById('edit_link').value = link;
+            document.getElementById('edit_lyrics_link').value = lyricsLink;
+            document.getElementById('edit_chords_link').value = chordsLink;
+            document.getElementById('editForm').action = '/edit_song/' + songId;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        function logPlay(songId, artist, title) {
+            if (confirm(`Log play for "${title}" by ${artist}?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/log_play/' + songId;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function deleteSong(songId, artist, title) {
+            if (confirm(`Delete "${title}" by ${artist}? This cannot be undone.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/delete_song/' + songId;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function updateProficiency(songId, proficiency) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/update_proficiency/' + songId;
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'proficiency';
+            input.value = proficiency;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Table sorting functionality
+        let sortDirections = [1, 1, 1, 1]; // 1 for ascending, -1 for descending
+        
+        function sortTable(columnIndex) {
+            const table = document.getElementById('songsTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Toggle sort direction
+            sortDirections[columnIndex] *= -1;
+            const direction = sortDirections[columnIndex];
+            
+            // Sort rows
+            rows.sort((a, b) => {
+                let aValue, bValue;
+                
+                if (columnIndex === 2) {
+                    // Proficiency column - count filled stars
+                    const aStars = a.cells[columnIndex].querySelectorAll('.star.filled').length;
+                    const bStars = b.cells[columnIndex].querySelectorAll('.star.filled').length;
+                    aValue = aStars;
+                    bValue = bStars;
+                } else if (columnIndex === 3) {
+                    // Last Played column - date comparison
+                    aValue = a.cells[columnIndex].textContent.trim();
+                    bValue = b.cells[columnIndex].textContent.trim();
+                    // Treat '-' as oldest date
+                    if (aValue === '-') aValue = '0000-00-00';
+                    if (bValue === '-') bValue = '0000-00-00';
+                } else {
+                    // Text columns
+                    aValue = a.cells[columnIndex].textContent.trim().toLowerCase();
+                    bValue = b.cells[columnIndex].textContent.trim().toLowerCase();
+                }
+                
+                if (aValue < bValue) return -1 * direction;
+                if (aValue > bValue) return 1 * direction;
+                return 0;
+            });
+            
+            // Clear and re-append sorted rows
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+            
+            // Update sort icons
+            document.querySelectorAll('.sort-icon').forEach((icon, index) => {
+                if (index === columnIndex) {
+                    icon.textContent = direction === 1 ? '↑' : '↓';
+                    icon.style.opacity = '1';
+                } else {
+                    icon.textContent = '↕';
+                    icon.style.opacity = '0.3';
+                }
+            });
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const addModal = document.getElementById('addModal');
+            const editModal = document.getElementById('editModal');
+            if (event.target === addModal) {
+                closeAddModal();
+            } else if (event.target === editModal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+</html>

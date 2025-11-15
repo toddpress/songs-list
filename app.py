@@ -1,192 +1,197 @@
-# ./main.py
-import streamlit as st
-import pandas as pd
+from flask import Flask, render_template, request, redirect, url_for, flash
+from datetime import date
 import urllib.parse
-import time
-
-from pytube import Search
 from database import DatabaseManager
 
-st.set_page_config(page_title="Linkify Songs List", page_icon="🎸")
+app = Flask(__name__)
+app.secret_key = 'your-secret-key-here-change-in-production'  # Change this in production!
 
-def add_youtube_links_to_df():
-    df = st.session_state.edited_df
-    unsaved_songs = df[
-        (df["link"].isna() | (df["link"] == "")) & 
-        ~df["title"].isna() & ~df["artist"].isna()
-    ]
-    for index, row in unsaved_songs.iterrows():
-        try:
-            query = f"{row['title']} {row['artist']}"
-            search = Search(query)
-            video = search.results[0]
-            yt_link = f"https://www.youtube.com/watch?v={video.video_id}"
-            st.session_state.edited_df.at[index, "link"] = yt_link
+def generate_youtube_search_url(artist, title):
+    """Generate a YouTube search URL for the song"""
+    query = f"{title} {artist}"
+    search_query = urllib.parse.quote_plus(query)
+    return f"https://www.youtube.com/results?search_query={search_query}"
 
-        except IndexError:
-            st.warning(f"No YouTube video found for {row['title']} by {row['artist']}")
+def generate_lyrics_search_url(artist, title):
+    """Generate a Google search URL for lyrics"""
+    query = f"{title} {artist} lyrics"
+    search_query = urllib.parse.quote_plus(query)
+    return f"https://www.google.com/search?q={search_query}"
 
-        except Exception as e:
-            st.error(
-                body=f"Error searching YouTube for {row['title']} by {row['artist']}: {e}",
-                icon=":material/error:"
-            )
+def generate_chords_search_url(artist, title):
+    """Generate an Ultimate Guitar search URL for chords"""
+    query = f"{title} {artist}"
+    search_query = urllib.parse.quote_plus(query)
+    return f"https://www.ultimate-guitar.com/search.php?search_type=title&value={search_query}"
 
-def add_lyrics_search_links_to_df():
-    df = st.session_state.edited_df
-    unsaved_songs = df[
-        (df["lyrics_link"].isna() | (df["lyrics_link"] == "")) & 
-        ~df["title"].isna() & ~df["artist"].isna()
-    ]
-    for index, row in unsaved_songs.iterrows():
-        try:
-            query = f"{row['title']} {row['artist']} lyrics"
-            search_query = urllib.parse.quote_plus(query)
-            search_link = f"https://www.google.com/search?q={search_query}"
-            st.session_state.edited_df.at[index, "lyrics_link"] = search_link
-
-        except Exception as e:
-            st.error(
-                body=f"Error creating lyrics link for {row['title']} by {row['artist']}: {e}",
-                icon=":material/error:"
-            )
-
-def add_chords_search_links_to_df():
-    df = st.session_state.edited_df
-    unsaved_songs = df[
-        (df["chords_link"].isna() | (df["chords_link"] == "")) & 
-        ~df["title"].isna() & ~df["artist"].isna()
-    ]
-    for index, row in unsaved_songs.iterrows():
-        try:
-            query = f"{row['title']} {row['artist']}"
-            search_query = urllib.parse.quote_plus(query)
-            search_link = f"https://www.ultimate-guitar.com/search.php?search_type=title&value={search_query}"
-            st.session_state.edited_df.at[index, "chords_link"] = search_link
-
-        except Exception as e:
-            st.error(
-                body=f"Error creating chords link for {row['title']} by {row['artist']}: {e}",
-                icon=":material/error:"
-            )
-
-def handle_save_changes():
-    # Initialize database connection
+@app.route('/')
+def index():
+    """Display all songs or search results"""
+    search_query = request.args.get('search', '').strip()
+    
     db = DatabaseManager()
-    
-    try:
-        add_youtube_links_to_df()
-        add_lyrics_search_links_to_df()
-        add_chords_search_links_to_df()
-
-        # Sync changes to database
-        success = db.sync_dataframe_to_database(st.session_state.edited_df, st.session_state.original_df)
-        
-        if success:
-            st.success(
-                body='Saved Changes to Database',
-                icon=":material/thumb_up:"
-            )
-            st.balloons()
-            time.sleep(2)  # Give the balloons time to fly before dom refresh
-            st.rerun()  # Manually re-render with updated data
-        else:
-            st.error("Failed to save changes to database")
-    
-    finally:
-        db.disconnect()
-
-
-def get_df_from_database(search_query=None):
-    """Load songs from database and return as DataFrame"""
-    db = DatabaseManager()
-    
     try:
         if search_query:
-            songs_data = db.search_songs(search_query)
+            songs = db.search_songs(search_query)
         else:
-            songs_data = db.get_all_songs()
+            songs = db.get_all_songs()
         
-        return db.songs_to_dataframe(songs_data)
-    
+        return render_template('index.html', songs=songs, search_query=search_query)
+    except Exception as e:
+        flash(f'Database error: {e}', 'error')
+        return render_template('index.html', songs=[], search_query=search_query)
     finally:
         db.disconnect()
 
-def main():
-    st.title("Songs List Editor")
-
-    # Add search functionality
-    search_query = st.text_input("Search songs by artist or title")
-
-    # Load and store the original DataFrame from database
+@app.route('/add_song', methods=['POST'])
+def add_song():
+    """Add a new song to the database"""
+    artist = request.form.get('artist', '').strip()
+    title = request.form.get('title', '').strip()
+    proficiency = request.form.get('proficiency', '☆☆☆☆☆')
+    
+    if not artist or not title:
+        flash('Artist and title are required!', 'error')
+        return redirect(url_for('index'))
+    
+    # Auto-generate search links
+    link = generate_youtube_search_url(artist, title)
+    lyrics_link = generate_lyrics_search_url(artist, title)
+    chords_link = generate_chords_search_url(artist, title)
+    
+    db = DatabaseManager()
     try:
-        original_df = get_df_from_database(search_query if search_query else None)
-        st.session_state.original_df = original_df
-        songs_df = original_df.copy()
+        success = db.insert_song(artist, title, proficiency, link, lyrics_link, chords_link)
+        if success:
+            flash(f'Successfully added "{title}" by {artist}!', 'success')
+        else:
+            flash('Failed to add song', 'error')
     except Exception as e:
-        st.error(f"Error connecting to database: {e}")
-        st.info("Please ensure MySQL is running and the database is properly configured.")
-        return
-
-    # Column order and sort by artist
-    columns_order = ["artist", "title", "proficiency", "link", "lyrics_link", "chords_link"]
+        flash(f'Error adding song: {e}', 'error')
+    finally:
+        db.disconnect()
     
-    # Ensure all columns exist
-    for col in columns_order:
-        if col not in songs_df.columns:
-            songs_df[col] = ""
-    
-    songs_df = songs_df[columns_order]
-    
-    if not songs_df.empty:
-        songs_df = songs_df.sort_values(by="artist")
-    
-    # Reset the index to prevent it from showing as a column
-    songs_df.reset_index(drop=True, inplace=True)
+    return redirect(url_for('index'))
 
-    st.session_state.edited_df = st.data_editor(
-        data=songs_df,
-        num_rows="dynamic",
-        column_config={
-            "artist": st.column_config.TextColumn("Artist"),
-            "title": st.column_config.TextColumn("Song"),
-            "proficiency": st.column_config.SelectboxColumn(
-                "Proficiency",
-                options=[
-                    "☆☆☆☆☆",
-                    "★☆☆☆☆",
-                    "★★☆☆☆",
-                    "★★★☆☆",
-                    "★★★★☆",
-                    "★★★★★"
-                ],
-                default="☆☆☆☆☆"
-            ),
-            "link": st.column_config.LinkColumn(
-                "YT Link",
-                disabled=True,
-                display_text="Listen on YouTube",
-            ),
-            "lyrics_link": st.column_config.LinkColumn(
-                "Lyrics Link",
-                disabled=True,
-                display_text="Find Lyrics on Google",
-            ),
-            "chords_link": st.column_config.LinkColumn(
-                "Chords Link",
-                disabled=True,
-                display_text="Find Chords on UG.com",
-            ),
-        },
-        hide_index=True,
-        use_container_width=True,
-    )
+@app.route('/log_play/<int:song_id>', methods=['POST'])
+def log_play(song_id):
+    """Log a play for a song"""
+    db = DatabaseManager()
+    try:
+        today = date.today()
+        success = db.log_play(song_id, today)
+        if success:
+            flash('Play logged successfully!', 'success')
+        else:
+            flash('Failed to log play', 'error')
+    except Exception as e:
+        flash(f'Error logging play: {e}', 'error')
+    finally:
+        db.disconnect()
+    
+    return redirect(url_for('index'))
 
-    if st.button(
-        label="Save Changes",
-        help="Save the changes made to the songs list",
-    ):
-        handle_save_changes()
+@app.route('/delete_song/<int:song_id>', methods=['POST'])
+def delete_song(song_id):
+    """Delete a song from the database"""
+    db = DatabaseManager()
+    try:
+        success = db.delete_song(song_id)
+        if success:
+            flash('Song deleted successfully!', 'success')
+        else:
+            flash('Failed to delete song', 'error')
+    except Exception as e:
+        flash(f'Error deleting song: {e}', 'error')
+    finally:
+        db.disconnect()
+    
+    return redirect(url_for('index'))
 
-if __name__ == "__main__":
-    main()
+@app.route('/update_proficiency/<int:song_id>', methods=['POST'])
+def update_proficiency(song_id):
+    """Update the proficiency of a song"""
+    proficiency = request.form.get('proficiency', '☆☆☆☆☆')
+    
+    db = DatabaseManager()
+    try:
+        # Get the current song data
+        query = "SELECT artist, title, link, lyrics_link, chords_link, last_played FROM songs WHERE id = %s"
+        cursor = db.connection.cursor(dictionary=True)
+        cursor.execute(query, (song_id,))
+        song = cursor.fetchone()
+        cursor.close()
+        
+        if song:
+            success = db.update_song(
+                song_id, 
+                song['artist'], 
+                song['title'], 
+                proficiency,
+                song['link'], 
+                song['lyrics_link'], 
+                song['chords_link'],
+                song['last_played']
+            )
+            if success:
+                flash('Proficiency updated!', 'success')
+            else:
+                flash('Failed to update proficiency', 'error')
+        else:
+            flash('Song not found', 'error')
+    except Exception as e:
+        flash(f'Error updating proficiency: {e}', 'error')
+    finally:
+        db.disconnect()
+    
+    return redirect(url_for('index'))
+
+@app.route('/edit_song/<int:song_id>', methods=['POST'])
+def edit_song(song_id):
+    """Edit an existing song"""
+    artist = request.form.get('artist', '').strip()
+    title = request.form.get('title', '').strip()
+    proficiency = request.form.get('proficiency', '☆☆☆☆☆')
+    link = request.form.get('link', '').strip() or None
+    lyrics_link = request.form.get('lyrics_link', '').strip() or None
+    chords_link = request.form.get('chords_link', '').strip() or None
+    
+    if not artist or not title:
+        flash('Artist and title are required!', 'error')
+        return redirect(url_for('index'))
+    
+    db = DatabaseManager()
+    try:
+        # Get the current last_played value
+        query = "SELECT last_played FROM songs WHERE id = %s"
+        cursor = db.connection.cursor(dictionary=True)
+        cursor.execute(query, (song_id,))
+        song = cursor.fetchone()
+        cursor.close()
+        
+        if song:
+            success = db.update_song(
+                song_id, 
+                artist, 
+                title, 
+                proficiency,
+                link, 
+                lyrics_link, 
+                chords_link,
+                song['last_played']
+            )
+            if success:
+                flash(f'Successfully updated "{title}" by {artist}!', 'success')
+            else:
+                flash('Failed to update song', 'error')
+        else:
+            flash('Song not found', 'error')
+    except Exception as e:
+        flash(f'Error updating song: {e}', 'error')
+    finally:
+        db.disconnect()
+    
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
