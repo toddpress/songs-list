@@ -47,7 +47,7 @@ class DatabaseManager:
     def get_all_songs(self):
         """Retrieve all songs from database"""
         query = """
-        SELECT id, artist, title, proficiency, link, lyrics_link, chords_link, last_played 
+        SELECT id, artist, title, proficiency, link, lyrics_link, chords_link, notes, last_played 
         FROM songs 
         ORDER BY artist, title
         """
@@ -56,7 +56,7 @@ class DatabaseManager:
     def search_songs(self, search_term):
         """Search songs by artist or title"""
         query = """
-        SELECT id, artist, title, proficiency, link, lyrics_link, chords_link, last_played 
+        SELECT id, artist, title, proficiency, link, lyrics_link, chords_link, notes, last_played 
         FROM songs 
         WHERE artist LIKE %s OR title LIKE %s
         ORDER BY artist, title
@@ -64,22 +64,22 @@ class DatabaseManager:
         search_pattern = f"%{search_term}%"
         return self.execute_query(query, (search_pattern, search_pattern), fetch=True)
     
-    def insert_song(self, artist, title, proficiency="☆☆☆☆☆", link=None, lyrics_link=None, chords_link=None, last_played=None):
+    def insert_song(self, artist, title, proficiency="☆☆☆☆☆", link=None, lyrics_link=None, chords_link=None, notes=None, last_played=None):
         """Insert a new song into the database"""
         query = """
-        INSERT INTO songs (artist, title, proficiency, link, lyrics_link, chords_link, last_played)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO songs (artist, title, proficiency, link, lyrics_link, chords_link, notes, last_played)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        return self.execute_query(query, (artist, title, proficiency, link, lyrics_link, chords_link, last_played))
+        return self.execute_query(query, (artist, title, proficiency, link, lyrics_link, chords_link, notes, last_played))
     
-    def update_song(self, song_id, artist, title, proficiency, link=None, lyrics_link=None, chords_link=None, last_played=None):
+    def update_song(self, song_id, artist, title, proficiency, link=None, lyrics_link=None, chords_link=None, notes=None, last_played=None):
         """Update an existing song in the database"""
         query = """
         UPDATE songs 
-        SET artist = %s, title = %s, proficiency = %s, link = %s, lyrics_link = %s, chords_link = %s, last_played = %s
+        SET artist = %s, title = %s, proficiency = %s, link = %s, lyrics_link = %s, chords_link = %s, notes = %s, last_played = %s
         WHERE id = %s
         """
-        return self.execute_query(query, (artist, title, proficiency, link, lyrics_link, chords_link, last_played, song_id))
+        return self.execute_query(query, (artist, title, proficiency, link, lyrics_link, chords_link, notes, last_played, song_id))
     
     def delete_song(self, song_id):
         """Delete a song from the database"""

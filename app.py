@@ -49,6 +49,7 @@ def add_song():
     artist = request.form.get('artist', '').strip()
     title = request.form.get('title', '').strip()
     proficiency = request.form.get('proficiency', '☆☆☆☆☆')
+    notes = request.form.get('notes', '').strip() or None
     
     if not artist or not title:
         flash('Artist and title are required!', 'error')
@@ -61,7 +62,7 @@ def add_song():
     
     db = DatabaseManager()
     try:
-        success = db.insert_song(artist, title, proficiency, link, lyrics_link, chords_link)
+        success = db.insert_song(artist, title, proficiency, link, lyrics_link, chords_link, notes)
         if success:
             flash(f'Successfully added "{title}" by {artist}!', 'success')
         else:
@@ -116,7 +117,7 @@ def update_proficiency(song_id):
     db = DatabaseManager()
     try:
         # Get the current song data
-        query = "SELECT artist, title, link, lyrics_link, chords_link, last_played FROM songs WHERE id = %s"
+        query = "SELECT artist, title, link, lyrics_link, chords_link, notes, last_played FROM songs WHERE id = %s"
         cursor = db.connection.cursor(dictionary=True)
         cursor.execute(query, (song_id,))
         song = cursor.fetchone()
@@ -131,6 +132,7 @@ def update_proficiency(song_id):
                 song['link'], 
                 song['lyrics_link'], 
                 song['chords_link'],
+                song['notes'],
                 song['last_played']
             )
             if success:
@@ -162,8 +164,8 @@ def edit_song(song_id):
     
     db = DatabaseManager()
     try:
-        # Get the current last_played value
-        query = "SELECT last_played FROM songs WHERE id = %s"
+        # Get the current last_played and notes values
+        query = "SELECT notes, last_played FROM songs WHERE id = %s"
         cursor = db.connection.cursor(dictionary=True)
         cursor.execute(query, (song_id,))
         song = cursor.fetchone()
@@ -178,6 +180,7 @@ def edit_song(song_id):
                 link, 
                 lyrics_link, 
                 chords_link,
+                song['notes'],  # Preserve existing notes
                 song['last_played']
             )
             if success:
@@ -188,6 +191,45 @@ def edit_song(song_id):
             flash('Song not found', 'error')
     except Exception as e:
         flash(f'Error updating song: {e}', 'error')
+    finally:
+        db.disconnect()
+    
+    return redirect(url_for('index'))
+
+@app.route('/update_notes/<int:song_id>', methods=['POST'])
+def update_notes(song_id):
+    """Update notes for a song"""
+    notes = request.form.get('notes', '').strip() or None
+    
+    db = DatabaseManager()
+    try:
+        # Get the current song data
+        query = "SELECT artist, title, proficiency, link, lyrics_link, chords_link, last_played FROM songs WHERE id = %s"
+        cursor = db.connection.cursor(dictionary=True)
+        cursor.execute(query, (song_id,))
+        song = cursor.fetchone()
+        cursor.close()
+        
+        if song:
+            success = db.update_song(
+                song_id, 
+                song['artist'], 
+                song['title'], 
+                song['proficiency'],
+                song['link'], 
+                song['lyrics_link'], 
+                song['chords_link'],
+                notes,
+                song['last_played']
+            )
+            if success:
+                flash('Notes updated successfully!', 'success')
+            else:
+                flash('Failed to update notes', 'error')
+        else:
+            flash('Song not found', 'error')
+    except Exception as e:
+        flash(f'Error updating notes: {e}', 'error')
     finally:
         db.disconnect()
     

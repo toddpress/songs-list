@@ -30,6 +30,7 @@
             {% endwith %}
 
             {% if songs %}
+                <!-- Desktop Table View -->
                 <table id="songsTable">
                     <thead>
                         <tr>
@@ -46,8 +47,8 @@
                     <tbody>
                         {% for song in songs %}
                         <tr>
-                            <td>{{ song.artist }}</td>
-                            <td>{{ song.title }}</td>
+                            <td class="clickable-notes" onclick="openNotesModal({{ song.id }}, '{{ song.artist }}', '{{ song.title }}', `{{ song.notes or '' }}`)">{{ song.artist }}</td>
+                            <td class="clickable-notes" onclick="openNotesModal({{ song.id }}, '{{ song.artist }}', '{{ song.title }}', `{{ song.notes or '' }}`)">{{ song.title }}</td>
                             <td class="proficiency-cell">
                                 <div class="proficiency-stars" data-song-id="{{ song.id }}">
                                     <span class="star {% if song.proficiency in ['★☆☆☆☆', '★★☆☆☆', '★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" data-value="★☆☆☆☆" onclick="updateProficiency({{ song.id }}, '★☆☆☆☆')">★</span>
@@ -88,6 +89,48 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <!-- Mobile Card View -->
+                <div class="mobile-cards">
+                    {% for song in songs %}
+                    <div class="song-card">
+                        <div class="song-card-header">
+                            <div class="song-info clickable-notes" onclick="openNotesModal({{ song.id }}, '{{ song.artist }}', '{{ song.title }}', `{{ song.notes or '' }}`)">
+                                <h3>{{ song.title }}</h3>
+                                <p>{{ song.artist }}</p>
+                            </div>
+                            <div class="song-card-proficiency">
+                                <div class="proficiency-stars" data-song-id="{{ song.id }}">
+                                    <span class="star {% if song.proficiency in ['★☆☆☆☆', '★★☆☆☆', '★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" onclick="updateProficiency({{ song.id }}, '★☆☆☆☆')">★</span>
+                                    <span class="star {% if song.proficiency in ['★★☆☆☆', '★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" onclick="updateProficiency({{ song.id }}, '★★☆☆☆')">★</span>
+                                    <span class="star {% if song.proficiency in ['★★★☆☆', '★★★★☆', '★★★★★'] %}filled{% endif %}" onclick="updateProficiency({{ song.id }}, '★★★☆☆')">★</span>
+                                    <span class="star {% if song.proficiency in ['★★★★☆', '★★★★★'] %}filled{% endif %}" onclick="updateProficiency({{ song.id }}, '★★★★☆')">★</span>
+                                    <span class="star {% if song.proficiency == '★★★★★' %}filled{% endif %}" onclick="updateProficiency({{ song.id }}, '★★★★★')">★</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="song-card-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Last Played:</span>
+                                <span>{{ song.last_played or 'Never' }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Links:</span>
+                                <span>
+                                    {% if song.link %}<a href="{{ song.link }}" target="_blank">YouTube</a>{% endif %}
+                                    {% if song.lyrics_link %} • <a href="{{ song.lyrics_link }}" target="_blank">Lyrics</a>{% endif %}
+                                    {% if song.chords_link %} • <a href="{{ song.chords_link }}" target="_blank">Chords</a>{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="song-card-actions">
+                            <button class="btn btn-success" onclick="logPlay({{ song.id }}, '{{ song.artist }}', '{{ song.title }}')">Log Play</button>
+                            <button class="btn btn-secondary" onclick="openEditModal({{ song.id }}, '{{ song.artist }}', '{{ song.title }}', '{{ song.proficiency }}', '{{ song.link or '' }}', '{{ song.lyrics_link or '' }}', '{{ song.chords_link or '' }}', `{{ song.notes or '' }}`)">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteSong({{ song.id }}, '{{ song.artist }}', '{{ song.title }}')">Delete</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             {% else %}
                 <div class="empty-state">
                     <h3>No songs found</h3>
@@ -126,7 +169,8 @@
                         </select>
                     </div>
                     <p style="color: #64748b; font-size: 0.9em; margin-top: 10px;">
-                        💡 YouTube, lyrics, and chords links will be automatically generated
+                        💡 YouTube, lyrics, and chords links will be automatically generated<br>
+                        💡 Click on artist/title after adding to add notes
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -181,6 +225,31 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
                     <button type="submit" class="btn btn-success">Update Song</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notes Modal -->
+    <div id="notesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="notes_song_title">Song Notes</h2>
+                <button class="close" onclick="closeNotesModal()">&times;</button>
+            </div>
+            <form id="notesForm" method="POST" action="">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="notes_textarea">Notes</label>
+                        <textarea id="notes_textarea" name="notes" rows="6" placeholder="Add any notes about this song..."></textarea>
+                    </div>
+                    <p style="color: #64748b; font-size: 0.9em;">
+                        💡 Add practice notes, chord progressions, difficulty tips, or anything else you want to remember
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeNotesModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Notes</button>
                 </div>
             </form>
         </div>
@@ -301,14 +370,28 @@
             });
         }
 
+        function openNotesModal(songId, artist, title, notes) {
+            document.getElementById('notes_song_title').textContent = `${title} by ${artist}`;
+            document.getElementById('notes_textarea').value = notes || '';
+            document.getElementById('notesForm').action = '/update_notes/' + songId;
+            document.getElementById('notesModal').classList.add('show');
+        }
+
+        function closeNotesModal() {
+            document.getElementById('notesModal').classList.remove('show');
+        }
+
         // Close modal when clicking outside
         window.onclick = function(event) {
             const addModal = document.getElementById('addModal');
             const editModal = document.getElementById('editModal');
+            const notesModal = document.getElementById('notesModal');
             if (event.target === addModal) {
                 closeAddModal();
             } else if (event.target === editModal) {
                 closeEditModal();
+            } else if (event.target === notesModal) {
+                closeNotesModal();
             }
         }
     </script>

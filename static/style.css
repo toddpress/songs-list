@@ -152,6 +152,10 @@ tr:hover {
     color: #d1d5db;
     transition: all 0.2s ease;
     user-select: none;
+    padding: 2px;
+    min-width: 20px;
+    display: inline-block;
+    text-align: center;
 }
 
 .proficiency-stars .star:hover {
@@ -369,19 +373,177 @@ select:focus {
 
 /* Responsive */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    header {
+        padding: 20px 15px;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+    
     .header-actions {
         flex-direction: column;
+        width: 100%;
     }
     
     .search-box {
         width: 100%;
     }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .content {
+        padding: 15px;
+        overflow-x: auto;
+    }
     
+    /* Hide table and show card layout on mobile */
     table {
+        display: none;
+    }
+
+    .mobile-cards {
+        display: block;
+    }
+
+    .song-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .song-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .song-info h3 {
+        font-size: 1.1em;
+        margin-bottom: 3px;
+        color: #1e293b;
+    }
+
+    .song-info p {
+        font-size: 0.9em;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .song-card-proficiency {
+        display: flex;
+        gap: 2px;
+        font-size: 1.2em;
+    }
+
+    .song-card-details {
+        margin: 10px 0;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
         font-size: 0.9em;
     }
-    
-    th, td {
-        padding: 10px;
+
+    .detail-label {
+        color: #64748b;
+        font-weight: 600;
+        min-width: 90px;
     }
+
+    .song-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .song-card-actions .btn {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        padding: 10px 16px;
+        font-size: 0.85em;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+    }
+
+    .modal-header h2 {
+        font-size: 1.3em;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 15px 20px;
+    }
+
+    .empty-state {
+        padding: 40px 20px;
+    }
+}
+
+/* Desktop view - hide mobile cards */
+@media (min-width: 769px) {
+    .mobile-cards {
+        display: none;
+    }
+}
+
+/* Clickable notes styling */
+.clickable-notes {
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-notes:hover {
+    background-color: #f0f4ff !important;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: #667eea;
+}
+
+/* Textarea styling */
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #667eea;
 }

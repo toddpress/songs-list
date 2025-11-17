@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS songs (
     link TEXT,
     lyrics_link TEXT,
     chords_link TEXT,
+    notes TEXT,
     last_played DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
